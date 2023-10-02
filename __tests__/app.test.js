@@ -37,3 +37,19 @@ describe('invalid endpoint', () => {
         })
     })
 })
+
+describe('GET /api', () => {
+    it('returns 200 with contents of endpoints.json as object', () => {
+        return request(app)
+        .get('/api/')
+        .expect(200)
+        .then((response) => {
+            expect(typeof response.body.endpoints).toBe('object');
+            expect(response.body.endpoints.hasOwnProperty('GET /api')).toBe(true)
+            expect(response.body.endpoints.hasOwnProperty('GET /api/topics')).toBe(true)
+            expect(response.body.endpoints.hasOwnProperty('GET /api/articles')).toBe(true)
+            const requiredKeys = ['description', 'queries', 'exampleResponse']
+            expect(Object.getOwnPropertyNames(response.body.endpoints['GET /api/topics'])).toEqual(requiredKeys)
+        })
+        })
+    })
