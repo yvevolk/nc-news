@@ -67,12 +67,20 @@ describe('GET /api/articles/:article_id', () => {
             expect(response.body.article[0].article_id).toBe(2)
          })
     })
-    it('returns 404 and error message when passed invalid article_id', () => {
+    it('returns 404 and error message when passed nonexistent article id', () => {
         return request(app)
         .get('/api/articles/333')
         .expect(404)
         .then((response) => {
             expect(response.body.message).toBe('invalid article id')
+        })
+    })
+    it ('returns 400 and error message when passed invalid article_id', () => {
+        return request(app)
+        .get('/api/articles/abcdefg')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('bad request')
         })
     })
     })
