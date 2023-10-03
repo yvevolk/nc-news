@@ -33,8 +33,12 @@ exports.getArticles = (req, res, next) => {
 
 exports.getComments = (req, res, next) => {
     const {article_id} = req.params;
-    fetchComments(article_id).then((result) => {
-        res.status(200).send({comments: result})
+    fetchComments(article_id).then((comments) => {
+        if (comments.length === 0){
+            res.status(200).send({comments})
+        }
+        else {
+        res.status(200).send({comments})}
     })
     .catch((err) => {next(err)})
 }

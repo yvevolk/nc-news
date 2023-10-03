@@ -125,12 +125,20 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(response.body.message).toBe('bad request')
         })
     })
-    it('returns 200 and message if article has no comments', () => {
+    it('returns 400 if article_id is valid but does not exist', () => {
+        return request(app)
+        .get('/api/articles/2222/comments')
+        .expect(404)
+        .then((response) => {
+            expect(response.body.message).toEqual('article does not exist')
+        })
+    })
+    it('returns 200 and empty array if article has no comments', () => {
         return request(app)
         .get('/api/articles/2/comments')
         .expect(200)
         .then((response) => {
-            expect(response.body.message).toBe('no comments found')
+            expect(response.body).toEqual({"comments": []})
         })
     })
 })
