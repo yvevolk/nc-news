@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { getTopics, getEndpointsInfo, getArticleById, getArticles} = require('./controllers/controllers.js')
+const { getTopics, getEndpointsInfo, getArticleById, getArticles, getComments} = require('./controllers/controllers.js')
 
 app.get('/api/topics', getTopics);
 
@@ -9,6 +9,8 @@ app.get('/api/', getEndpointsInfo);
 app.get('/api/articles/:article_id', getArticleById);
 
 app.get('/api/articles', getArticles);
+
+app.get('/api/articles/:article_id/comments', getComments);
 
 app.all('/api/*', function (req, res, next) {
     res.status(404).send({message: 'error, invalid endpoint'})

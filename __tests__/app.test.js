@@ -102,3 +102,35 @@ describe('GET /api/articles/:article_id', () => {
         })
     })
     
+describe('GET /api/articles/:article_id/comments', () => {
+    it('returns 200 and array of comments for relevant article', () => {
+        return request(app)
+        .get('/api/articles/9/comments')
+        .expect(200)
+        .then((response) => {
+            expect(Array.isArray(response.body.comments)).toBe(true);
+            expect(response.body.comments.length).toBe(2);
+            const requiredKeys = ['comment_id', 'votes', 'created_at', 'author', 'body', 'article_id']
+            response.body.comments.forEach((comment) => {
+                expect(Object.getOwnPropertyNames(comment)).toEqual(requiredKeys)
+            })
+            expect(response.body.comments).toBeSortedBy('created_at', {descending: true})
+        })
+    })
+    it('returns 400 if article_id is invalid', () => {
+        return request(app)
+        .get('/api/articles/abc/comments')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('bad request')
+        })
+    })
+    it('returns 200 and message if article has no comments', () => {
+        return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then((response) => {
+            expect(response.body.message).toBe('no comments found')
+        })
+    })
+})

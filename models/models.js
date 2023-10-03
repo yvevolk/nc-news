@@ -20,8 +20,20 @@ exports.fetchArticleById = (article_id) => {
 }
 
 exports.fetchArticles = () => {
-   const queryString = `SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles ORDER BY created_at DESC`
-   return db.query(queryString).then(({rows}) => {
+   return db.query(`SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles ORDER BY created_at DESC`).then(({rows}) => {
       return rows
+   })
+}
+
+exports.fetchComments = (article_id) => {
+   return db.query(`SELECT comment_id, votes, created_at, author, body, article_id FROM comments WHERE article_id =$1 ORDER BY created_at DESC;`, [article_id]).then(({rows}) => {
+  if (rows.length === 0){
+   return Promise.reject({
+      status: 200,
+      message: 'no comments found'
+   })
+}
+  
+     else {return rows}
    })
 }
