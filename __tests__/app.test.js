@@ -51,5 +51,36 @@ describe('GET /api', () => {
             const requiredKeys = ['description', 'queries', 'exampleResponse']
             expect(Object.getOwnPropertyNames(response.body.endpoints['GET /api/topics'])).toEqual(requiredKeys)
         })
+     })
+    })
+
+describe('GET /api/articles/:article_id', () => {
+    it('returns 200 with correct article, in correct format, with correct keys', () => {
+         return request(app)
+         .get('/api/articles/2')
+         .expect(200)
+         .then((response) => {
+            expect(Array.isArray(response.body.article)).toBe(true)
+            expect(typeof response.body.article[0]).toBe('object');
+            const requiredKeys = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url']
+            expect(Object.getOwnPropertyNames(response.body.article[0])).toEqual(requiredKeys);
+            expect(response.body.article[0].article_id).toBe(2)
+         })
+    })
+    it('returns 404 and error message when passed nonexistent article id', () => {
+        return request(app)
+        .get('/api/articles/333')
+        .expect(404)
+        .then((response) => {
+            expect(response.body.message).toBe('invalid article id')
         })
+    })
+    it ('returns 400 and error message when passed invalid article_id', () => {
+        return request(app)
+        .get('/api/articles/abcdefg')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('bad request')
+        })
+    })
     })
