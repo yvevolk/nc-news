@@ -15,7 +15,8 @@ app.all('/api/*', function (req, res, next) {
 })
 
 app.use((err, req, res, next) => {
-    if (err.code === '22P02'){res.status(400).send({message: 'bad request'})}
+    if (err.status && err.message){res.status(err.status).send({message: err.message})}
+    else if (err.code === '22P02'){res.status(400).send({message: 'bad request'})}
     else {res.status(500).send({message: 'internal server error' })}
 });
 

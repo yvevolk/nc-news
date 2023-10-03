@@ -84,3 +84,21 @@ describe('GET /api/articles/:article_id', () => {
         })
     })
     })
+
+    describe('GET /api/articles', () => {
+        it('returns 200 and array of correct article objects sorted by created_at DESC by default', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then((response) => {
+                expect(response.body.articles.length).toBe(13);
+                expect(response.body.articles).toBeSortedBy('created_at', {descending: true});
+                response.body.articles.forEach((article) => {
+                    const requiredKeys = ['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'article_img_url']
+                    expect(Object.getOwnPropertyNames(article)).toEqual(requiredKeys);
+                    expect(Object.getOwnPropertyNames(article)).not.toContain('body')
+                })
+            })
+        })
+    })
+    
