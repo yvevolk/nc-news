@@ -20,7 +20,8 @@ exports.fetchArticleById = (article_id) => {
 }
 
 exports.fetchArticles = () => {
-   return db.query(`SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles ORDER BY created_at DESC;`).then(({rows}) => {
+   const queryString = `SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles ORDER BY created_at DESC`
+   return db.query(queryString).then(({rows}) => {
       return rows
    })
 }

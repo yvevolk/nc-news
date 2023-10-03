@@ -86,7 +86,7 @@ describe('GET /api/articles/:article_id', () => {
     })
 
     describe('GET /api/articles', () => {
-        it('returns 200 and array of article objects', () => {
+        it('returns 200 and array of correct article objects sorted by created_at DESC by default', () => {
             return request(app)
             .get('/api/articles')
             .expect(200)
