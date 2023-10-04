@@ -59,5 +59,20 @@
         "article_id": 1
       }]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds new comment to database and serves new comment",
+    "queries": ["body", "author"],
+    "exampleResponse": {
+      "comment": [{
+        "comment_id": 19,
+        "body": "My hovercraft is full of eels.",
+        "article_id": 2,
+        "author": "icellusedkars",
+        "votes": 0,
+        "created_at": "1604437200000"
+      }]
+    }
   }
+
 }
