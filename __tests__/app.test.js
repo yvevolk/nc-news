@@ -187,3 +187,66 @@ describe('POST /api/articles/:article_id/comments', () => {
         })
     })
 })
+
+describe('PATCH /api/articles/:article_id/', () => {
+    it('returns patched article with increased number of votes', () => {
+        const incVotes = {inc_votes : 99}
+        return request(app)
+        .patch('/api/articles/1')
+        .send(incVotes)
+        .expect(200)
+        .then((response) => {
+        expect(response.body.article[0].votes).toBe(199)
+        })
+    })
+    it('returns patched article with decreased number of votes', () => {
+        const incVotes = {inc_votes : -100}
+        return request(app)
+        .patch('/api/articles/2')
+        .send(incVotes)
+        .expect(200)
+        .then((response) => {
+        expect(response.body.article[0].votes).toBe(-100)
+        })
+    })
+    it('returns 400 when trying to patch invalid article_id', () => {
+        const incVotes = {inc_votes : 100}
+        return request(app)
+        .patch('/api/articles/abc')
+        .send(incVotes)
+        .expect(400)
+        .then((response) =>{
+            expect(response.body.message).toBe('bad request')
+        })
+    })
+    it('returns 404 when trying to patch valid article_id that does not exist', () => {
+        const incVotes = {inc_votes : 100}
+        return request(app)
+        .patch('/api/articles/2222')
+        .send(incVotes)
+        .expect(404)
+        .then((response) =>{
+            expect(response.body.message).toBe('not found')
+        })
+    })
+    it('returns 400 when trying to increase votes by invalid inc_votes', () => {
+        const incVotes = {inc_votes : 'ten'}
+        return request(app)
+        .patch('/api/articles/1')
+        .send(incVotes)
+        .expect(400)
+        .then((response) =>{
+            expect(response.body.message).toBe('bad request')
+        })
+    })
+    it('returns 400 when inc_votes object is in an invalid format and/or does not have incVotes key', () => {
+        const incVotes = {add_votes : 99999}
+        return request(app)
+        .patch('/api/articles/1')
+        .send(incVotes)
+        .expect(400)
+        .then((response) =>{
+            expect(response.body.message).toBe('bad request')
+        })
+    })
+})

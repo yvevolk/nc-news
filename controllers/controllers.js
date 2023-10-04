@@ -1,4 +1,4 @@
-const {fetchTopics, fetchArticleById, fetchArticles, fetchComments, addComment} = require('../models/models.js')
+const {fetchTopics, fetchArticleById, fetchArticles, fetchComments, addComment, updateArticle} = require('../models/models.js')
 const fs = require('fs/promises')
 
 exports.getTopics = (req, res, next) => {
@@ -46,4 +46,16 @@ exports.postComment = (req, res, next) => {
         res.status(201).send({comment})
     })
     .catch((err) => {next(err)})
+}
+
+exports.patchArticle = (req, res, next) => {
+    if(!req.body.hasOwnProperty('inc_votes')){
+        return res.status(400).send({message: 'bad request'})
+    }
+    const changeVotesBy = req.body.inc_votes;
+    const {article_id} = req.params;
+    updateArticle(changeVotesBy, article_id).then((article) => {
+        res.status(200).send({article})
+    })
+    .catch((err) => next(err))
 }

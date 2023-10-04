@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const {getTopics, getEndpointsInfo, getArticleById, getArticles, getComments, postComment} = require('./controllers/controllers.js')
+const {getTopics, getEndpointsInfo, getArticleById, getArticles, getComments, postComment, patchArticle} = require('./controllers/controllers.js')
 
 app.use(express.json());
 
@@ -15,6 +15,8 @@ app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id/comments', getComments);
 
 app.post('/api/articles/:article_id/comments', postComment);
+
+app.patch('/api/articles/:article_id', patchArticle);
 
 app.all('/api/*', function (req, res, next) {
     res.status(404).send({message: 'error, invalid endpoint'})
