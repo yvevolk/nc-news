@@ -19,8 +19,14 @@ exports.fetchArticleById = (article_id) => {
    })
 }
 
+/* SELECT authors.author_name, COUNT(book_id) AS number_of_books
+FROM authors
+LEFT JOIN books ON books.author_id = authors.author_id
+GROUP BY authors.author_id; */
+
+
 exports.fetchArticles = () => {
-   return db.query(`SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles ORDER BY created_at DESC`).then(({rows}) => {
+   return db.query(`SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;`).then(({rows}) => {
       return rows
    })
 }
