@@ -1,9 +1,9 @@
-const { fetchTopics, fetchArticleById, fetchArticles } = require('../models/models.js')
+const { fetchTopics, fetchArticleById, fetchArticles, fetchComments} = require('../models/models.js')
 const fs = require('fs/promises')
 
 exports.getTopics = (req, res, next) => {
-    fetchTopics().then((result) => {
-        res.status(200).send({topics: result})
+    fetchTopics().then((topics) => {
+        res.status(200).send({topics})
     })
     .catch((err) => {next(err)})
 }
@@ -18,15 +18,23 @@ exports.getEndpointsInfo = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
     const {article_id} = req.params;
-    fetchArticleById(article_id).then((result) => {
-        res.status(200).send({article: result})
+    fetchArticleById(article_id).then((article) => {
+        res.status(200).send({article})
     })
     .catch((err) => {next(err)})
 }
 
 exports.getArticles = (req, res, next) => {
-    fetchArticles().then((result) => {
-       res.status(200).send({articles: result})
+    fetchArticles().then((articles) => {
+       res.status(200).send({articles})
+    })
+    .catch((err) => {next(err)})
+}
+
+exports.getComments = (req, res, next) => {
+    const {article_id} = req.params;
+    fetchComments(article_id).then((comments) => {
+        res.status(200).send({comments})
     })
     .catch((err) => {next(err)})
 }
