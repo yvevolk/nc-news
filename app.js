@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const {getTopics, getEndpointsInfo, getArticleById, getArticles, getComments, postComment, patchArticle} = require('./controllers/controllers.js')
+const {getTopics, getEndpointsInfo, getArticleById, getArticles, getComments, postComment, patchArticle, deleteComment} = require('./controllers/controllers.js')
 
 app.use(express.json());
 
@@ -18,6 +18,8 @@ app.post('/api/articles/:article_id/comments', postComment);
 
 app.patch('/api/articles/:article_id', patchArticle);
 
+app.delete('/api/comments/:comment_id', deleteComment);
+
 app.all('/api/*', function (req, res, next) {
     res.status(404).send({message: 'error, invalid endpoint'})
 })
@@ -30,7 +32,7 @@ app.use((err, req, res, next) => {
         res.status(400).send({message: 'bad request'})}
     else if (err.code === '23503'){
         res.status(404).send({message: 'not found'})}
-    else {
+    else {console.log(err)
         res.status(500).send({message: 'internal server error' })}
 });
 

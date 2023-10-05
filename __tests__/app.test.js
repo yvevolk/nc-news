@@ -85,7 +85,7 @@ describe('GET /api/articles/:article_id', () => {
     })
     })
 
-    describe.only('GET /api/articles', () => {
+    describe('GET /api/articles', () => {
         it('returns 200 and array of correct article objects sorted by created_at DESC by default', () => {
             return request(app)
             .get('/api/articles')
@@ -224,6 +224,29 @@ describe('POST /api/articles/:article_id/comments', () => {
         .expect(400)
         .then((response) => {
             expect(response.body.message).toBe('bad request')
+        })
+    })
+})
+describe('DELETE /api/comments/:comment_id', () => {
+    it('returns 204 when comment is deleted', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+    })
+    it('returns 400 when trying to delete comment with invalid comment_id', () => {
+        return request(app)
+        .delete('/api/comments/abc')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('bad request')
+        })
+    })
+    it('returns 404 when trying to delete comment with valid comment_id that does not exist', () => {
+        return request(app)
+        .delete('/api/comments/3333')
+        .expect(404)
+        .then((response) => {
+            expect(response.body.message).toBe('not found')
         })
     })
 })
