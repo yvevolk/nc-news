@@ -72,7 +72,7 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/333')
         .expect(404)
         .then((response) => {
-            expect(response.body.message).toBe('invalid article id')
+            expect(response.body.message).toBe('not found')
         })
     })
     it ('returns 400 and error message when passed invalid article_id', () => {
@@ -166,7 +166,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(response.body.comment.author).toBe('icellusedkars')
         })
     })
-    it('returns 404 when passed username that does not exist', () => {
+    it('returns 404 when passed valid username that does not exist', () => {
         const newComment = {body: 'I want to post a comment', author: 'idontexist'};
         return request(app)
         .post('/api/articles/2/comments')
