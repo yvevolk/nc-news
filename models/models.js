@@ -45,17 +45,8 @@ exports.fetchComments = (article_id) => {
 }
 
 exports.addComment = (comment, article_id) => {
-   return db.query(`SELECT * FROM users WHERE username = $1`, [comment.author])
-   .then(({rows}) => {
-      if (rows.length){
          return db.query(`INSERT INTO comments (body, author, article_id) VALUES ($1, $2, $3) RETURNING *;`, [comment.body, comment.author, article_id])
          .then(({rows}) => {
             return rows[0];
          })
-      }
-      else {return Promise.reject({
-         status: 400,
-         message: 'bad request'
-      })}
-   })
-}
+   }

@@ -156,14 +156,14 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(response.body.comment.author).toBe('icellusedkars')
         })
     })
-    it('returns 400 when passed username that does not exist', () => {
+    it('returns 404 when passed username that does not exist', () => {
         const newComment = {body: 'I want to post a comment', author: 'idontexist'};
         return request(app)
         .post('/api/articles/2/comments')
         .send(newComment)
-        .expect(400)
+        .expect(404)
         .then((response) => {
-            expect(response.body.message).toBe('bad request')
+            expect(response.body.message).toBe('not found')
         })
     })
     it('returns 400 when passed invalid article_id', () => {
@@ -184,6 +184,36 @@ describe('POST /api/articles/:article_id/comments', () => {
         .expect(404)
         .then((response) => {
             expect(response.body.message).toBe('not found')
+        })
+    })
+    it('returns 400 when passed object without a body property', () => {
+        const newComment = {body: 'My hovercraft is full of eels'};
+        return request(app)
+        .post('/api/articles/2/comments')
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('bad request')
+        })
+    })
+    it('returns 400 when passed object without an author property', () => {
+        const newComment = {author: 'icellusedkars'};
+        return request(app)
+        .post('/api/articles/2/comments')
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('bad request')
+        })
+    })
+    it('returns 400 when passed empty object (has neither required property)', () => {
+        const newComment = {};
+        return request(app)
+        .post('/api/articles/2/comments')
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('bad request')
         })
     })
 })
