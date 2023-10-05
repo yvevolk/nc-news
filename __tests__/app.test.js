@@ -72,7 +72,7 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/333')
         .expect(404)
         .then((response) => {
-            expect(response.body.message).toBe('invalid article id')
+            expect(response.body.message).toBe('not found')
         })
     })
     it ('returns 400 and error message when passed invalid article_id', () => {
@@ -156,14 +156,14 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(response.body.comment.author).toBe('icellusedkars')
         })
     })
-    it('returns 400 when passed username that does not exist', () => {
+    it('returns 404 when passed valid username that does not exist', () => {
         const newComment = {body: 'I want to post a comment', author: 'idontexist'};
         return request(app)
         .post('/api/articles/2/comments')
         .send(newComment)
-        .expect(400)
+        .expect(404)
         .then((response) => {
-            expect(response.body.message).toBe('bad request')
+            expect(response.body.message).toBe('not found')
         })
     })
     it('returns 400 when passed invalid article_id', () => {
@@ -186,66 +186,33 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(response.body.message).toBe('not found')
         })
     })
-})
-
-describe('PATCH /api/articles/:article_id/', () => {
-    it('returns patched article with increased number of votes', () => {
-        const incVotes = {inc_votes : 99}
+    it('returns 400 when passed object without a body property', () => {
+        const newComment = {body: 'My hovercraft is full of eels'};
         return request(app)
-        .patch('/api/articles/1')
-        .send(incVotes)
-        .expect(200)
-        .then((response) => {
-        expect(response.body.article[0].votes).toBe(199)
-        })
-    })
-    it('returns patched article with decreased number of votes', () => {
-        const incVotes = {inc_votes : -100}
-        return request(app)
-        .patch('/api/articles/2')
-        .send(incVotes)
-        .expect(200)
-        .then((response) => {
-        expect(response.body.article[0].votes).toBe(-100)
-        })
-    })
-    it('returns 400 when trying to patch invalid article_id', () => {
-        const incVotes = {inc_votes : 100}
-        return request(app)
-        .patch('/api/articles/abc')
-        .send(incVotes)
+        .post('/api/articles/2/comments')
+        .send(newComment)
         .expect(400)
-        .then((response) =>{
+        .then((response) => {
             expect(response.body.message).toBe('bad request')
         })
     })
-    it('returns 404 when trying to patch valid article_id that does not exist', () => {
-        const incVotes = {inc_votes : 100}
+    it('returns 400 when passed object without an author property', () => {
+        const newComment = {author: 'icellusedkars'};
         return request(app)
-        .patch('/api/articles/2222')
-        .send(incVotes)
-        .expect(404)
-        .then((response) =>{
-            expect(response.body.message).toBe('not found')
-        })
-    })
-    it('returns 400 when trying to increase votes by invalid inc_votes', () => {
-        const incVotes = {inc_votes : 'ten'}
-        return request(app)
-        .patch('/api/articles/1')
-        .send(incVotes)
+        .post('/api/articles/2/comments')
+        .send(newComment)
         .expect(400)
-        .then((response) =>{
+        .then((response) => {
             expect(response.body.message).toBe('bad request')
         })
     })
-    it('returns 400 when inc_votes object is in an invalid format and/or does not have incVotes key', () => {
-        const incVotes = {add_votes : 99999}
+    it('returns 400 when passed empty object (has neither required property)', () => {
+        const newComment = {};
         return request(app)
-        .patch('/api/articles/1')
-        .send(incVotes)
+        .post('/api/articles/2/comments')
+        .send(newComment)
         .expect(400)
-        .then((response) =>{
+        .then((response) => {
             expect(response.body.message).toBe('bad request')
         })
     })

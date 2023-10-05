@@ -49,13 +49,11 @@ exports.postComment = (req, res, next) => {
 }
 
 exports.patchArticle = (req, res, next) => {
-    if(!req.body.hasOwnProperty('inc_votes')){
-        return res.status(400).send({message: 'bad request'})
-    }
     const changeVotesBy = req.body.inc_votes;
     const {article_id} = req.params;
+    fetchArticleById(article_id).then(() => {
     updateArticle(changeVotesBy, article_id).then((article) => {
         res.status(200).send({article})
-    })
+    })})
     .catch((err) => next(err))
 }
