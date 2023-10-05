@@ -85,7 +85,7 @@ describe('GET /api/articles/:article_id', () => {
     })
     })
 
-    describe('GET /api/articles', () => {
+    describe.only('GET /api/articles', () => {
         it('returns 200 and array of correct article objects sorted by created_at DESC by default', () => {
             return request(app)
             .get('/api/articles')
@@ -94,10 +94,20 @@ describe('GET /api/articles/:article_id', () => {
                 expect(response.body.articles.length).toBe(13);
                 expect(response.body.articles).toBeSortedBy('created_at', {descending: true});
                 response.body.articles.forEach((article) => {
-                    const requiredKeys = ['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'article_img_url']
+                    const requiredKeys = ['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'article_img_url', 'comment_count']
                     expect(Object.getOwnPropertyNames(article)).toEqual(requiredKeys);
                     expect(Object.getOwnPropertyNames(article)).not.toContain('body')
                 })
+            })
+        })
+        it('should have a correct comment_count', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then((response) => {
+                expect(response.body.articles[4].comment_count).toBe('0')
+                expect(response.body.articles[5].comment_count).toBe('2')
+                expect(response.body.articles[6].comment_count).toBe('11')
             })
         })
     })

@@ -30,7 +30,7 @@ app.use((err, req, res, next) => {
         res.status(400).send({message: 'bad request'})}
     else if (err.code === '23503'){
         res.status(404).send({message: 'not found'})}
-    else {console.log(err)
+    else {
         res.status(500).send({message: 'internal server error' })}
 });
 
