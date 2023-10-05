@@ -249,4 +249,18 @@ describe('DELETE /api/comments/:comment_id', () => {
             expect(response.body.message).toBe('not found')
         })
     })
+describe('GET /api/users', () => {
+    it('returns 200 and array of user objects with correct properties', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then((response) => {
+            expect(response.body.users.length).toBe(4)
+            const requiredKeys = ['username', 'name', 'avatar_url']
+            response.body.users.forEach((user) => {
+                expect(Object.getOwnPropertyNames(user)).toEqual(requiredKeys)
+            })
+        })
+    })
+})
 })
