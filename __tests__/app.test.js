@@ -85,7 +85,7 @@ describe('GET /api/articles/:article_id', () => {
     })
     })
 
-    describe('GET /api/articles', () => {
+    describe.only('GET /api/articles', () => {
         it('returns 200 and array of correct article objects sorted by created_at DESC by default', () => {
             return request(app)
             .get('/api/articles')
@@ -94,10 +94,20 @@ describe('GET /api/articles/:article_id', () => {
                 expect(response.body.articles.length).toBe(13);
                 expect(response.body.articles).toBeSortedBy('created_at', {descending: true});
                 response.body.articles.forEach((article) => {
-                    const requiredKeys = ['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'article_img_url']
+                    const requiredKeys = ['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'article_img_url', 'comment_count']
                     expect(Object.getOwnPropertyNames(article)).toEqual(requiredKeys);
                     expect(Object.getOwnPropertyNames(article)).not.toContain('body')
                 })
+            })
+        })
+        it('should have a correct comment_count', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then((response) => {
+                expect(response.body.articles[4].comment_count).toBe('0')
+                expect(response.body.articles[5].comment_count).toBe('2')
+                expect(response.body.articles[6].comment_count).toBe('11')
             })
         })
     })
@@ -125,7 +135,7 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(response.body.message).toBe('bad request')
         })
     })
-    it('returns 400 if article_id is valid but does not exist', () => {
+    it('returns 404 if article_id is valid but does not exist', () => {
         return request(app)
         .get('/api/articles/2222/comments')
         .expect(404)
@@ -139,6 +149,51 @@ describe('GET /api/articles/:article_id/comments', () => {
         .expect(200)
         .then((response) => {
             expect(response.body).toEqual({"comments": []})
+        })
+    })
+})
+
+describe('POST /api/articles/:article_id/comments', () => {
+    it('returns 201 and new comment when passed valid comment and article id', () => {
+        const newComment = {body: 'My hovercraft is full of eels.', author: 'icellusedkars'};
+        return request(app)
+        .post('/api/articles/2/comments')
+        .send(newComment)
+        .expect(201)
+        .then((response) => {
+            expect(response.body.comment.comment_id).toBe(19);
+            expect(response.body.comment.body).toBe('My hovercraft is full of eels.');
+            expect(response.body.comment.author).toBe('icellusedkars')
+        })
+    })
+    it('returns 400 when passed username that does not exist', () => {
+        const newComment = {body: 'I want to post a comment', author: 'idontexist'};
+        return request(app)
+        .post('/api/articles/2/comments')
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('bad request')
+        })
+    })
+    it('returns 400 when passed invalid article_id', () => {
+        const newComment = {body: 'My hovercraft is full of eels.', author: 'icellusedkars'};
+        return request(app)
+        .post('/api/articles/abc/comments')
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('bad request')
+        })
+    })
+    it('returns 404 when passed valid article_id that does not exist', () => {
+        const newComment = {body: 'My hovercraft is full of eels.', author: 'icellusedkars'};
+        return request(app)
+        .post('/api/articles/2222/comments')
+        .send(newComment)
+        .expect(404)
+        .then((response) => {
+            expect(response.body.message).toBe('not found')
         })
     })
 })
