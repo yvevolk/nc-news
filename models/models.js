@@ -19,12 +19,6 @@ exports.fetchArticleById = (article_id) => {
    })
 }
 
-/* SELECT authors.author_name, COUNT(book_id) AS number_of_books
-FROM authors
-LEFT JOIN books ON books.author_id = authors.author_id
-GROUP BY authors.author_id; */
-
-
 exports.fetchArticles = () => {
    return db.query(`SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;`).then(({rows}) => {
       return rows
@@ -58,18 +52,25 @@ exports.addComment = (comment, article_id) => {
 
 }
 exports.updateArticle = (num, article_id) => {
-   return db.query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
-   .then(({rows}) => {
-      if (rows.length){
          return db.query(`UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`, [num, article_id])
          .then(({rows}) => {
             return rows;
          })
-      }
-      else {return Promise.reject({
-         status: 404,
-         message: 'not found'
-      })}
-   })
-}
    }
+
+exports.fetchComment = (comment_id) => {
+      return db.query(`SELECT * FROM comments WHERE comment_id = $1;`, [comment_id])
+      .then(({rows}) => {
+         if (rows.length === 0){
+         return Promise.reject({
+            status: 404,
+            message: 'not found'
+         })
+      }
+         return rows
+      })
+   }
+
+exports.removeComment = (comment_id) => {
+         return db.query(`DELETE FROM comments WHERE comment_id = $1;`, [comment_id])
+      }
