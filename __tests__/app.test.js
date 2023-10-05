@@ -140,7 +140,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/2222/comments')
         .expect(404)
         .then((response) => {
-            expect(response.body.message).toEqual('article does not exist')
+            expect(response.body.message).toEqual('not found')
         })
     })
     it('returns 200 and empty array if article has no comments', () => {
