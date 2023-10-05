@@ -1,4 +1,4 @@
-const {fetchTopics, fetchArticleById, fetchArticles, fetchComments, addComment, updateArticle, fetchComment, removeComment} = require('../models/models.js')
+const {fetchTopics, fetchArticleById, fetchArticles, fetchComments, addComment, updateArticle, fetchComment, removeComment, fetchUsers} = require('../models/models.js')
 const fs = require('fs/promises')
 
 exports.getTopics = (req, res, next) => {
@@ -65,3 +65,9 @@ exports.deleteComment = (req, res, next) => {
         res.status(204).send();
     })})
     .catch((err) => {next(err)})}
+
+exports.getUsers = (req, res, next) => {
+    fetchUsers().then((users) => {
+        res.status(200).send({users});
+    })
+}
