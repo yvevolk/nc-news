@@ -3,7 +3,7 @@
     "description": "serves up a json representation of all the available endpoints of the api",
     "queries": [],
     "exampleResponse": {
-      "endpoints": [{ "GET /api/topics": "serves an array of all topics", "GET api/articles": "serves an array of all articles" }]
+      "endpoints": [{ "GET /api/topics": "serves an array of all topics", "GET /api/articles": "serves an array of all articles" }]
     }
   },
   "GET /api/topics": {
