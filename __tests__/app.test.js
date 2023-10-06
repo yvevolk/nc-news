@@ -110,6 +110,39 @@ describe('GET /api/articles/:article_id', () => {
                 expect(response.body.articles[6].comment_count).toBe('11')
             })
         })
+        it('should return articles corresponding to topic when passed topic query', () => {
+            return request(app)
+            .get('/api/articles?topic=mitch')
+            .expect(200)
+            .then((response) => {
+                expect(response.body.articles.length).toBe(12)
+                expect(response.body.articles[0].topic).toBe('mitch')
+            })
+        })
+        it('should return empty array when passed topic that has no articles', () => {
+            return request(app)
+            .get('/api/articles?topic=paper')
+            .expect(200)
+            .then((response) => {
+                expect(response.body).toEqual({"articles": []})
+            })
+        })
+        it('should return 404 when trying to get articles for topic that does not exist', () => {
+            return request(app)
+            .get('/api/articles?topic=sports')
+            .expect(404)
+            .then((response) => {
+                expect(response.body.message).toBe('not found')
+            })
+        })
+        it('should return 400 when trying to query column that does not exist', () => {
+            return request(app)
+            .get('/api/articles?theme=mitch')
+            .expect(400)
+            .then((response) => {
+                expect(response.body.message).toBe('bad request')
+            })
+        })
     })
     
 describe('GET /api/articles/:article_id/comments', () => {
@@ -140,7 +173,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/2222/comments')
         .expect(404)
         .then((response) => {
-            expect(response.body.message).toEqual('article does not exist')
+            expect(response.body.message).toEqual('not found')
         })
     })
     it('returns 200 and empty array if article has no comments', () => {
