@@ -54,7 +54,7 @@ describe('GET /api', () => {
      })
     })
 
-describe.only('GET /api/articles/:article_id', () => {
+describe('GET /api/articles/:article_id', () => {
     it('returns 200 with correct article, in correct format, with correct keys', () => {
          return request(app)
          .get('/api/articles/2')
@@ -83,7 +83,7 @@ describe.only('GET /api/articles/:article_id', () => {
             expect(response.body.message).toBe('bad request')
         })
     })
-    it('should have correct comment_count when article exists and has comments', () => {
+    it('should have correct comment_count when article exists and has', () => {
         return request(app)
         .get('/api/articles/1')
         .expect(200)
@@ -300,6 +300,7 @@ describe('DELETE /api/comments/:comment_id', () => {
             expect(response.body.message).toBe('not found')
         })
     })
+})
 describe('GET /api/users', () => {
     it('returns 200 and array of user objects with correct properties', () => {
         return request(app)
@@ -314,4 +315,4 @@ describe('GET /api/users', () => {
         })
     })
 })
-})
+
