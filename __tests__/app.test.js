@@ -54,7 +54,7 @@ describe('GET /api', () => {
      })
     })
 
-describe('GET /api/articles/:article_id', () => {
+describe.only('GET /api/articles/:article_id', () => {
     it('returns 200 with correct article, in correct format, with correct keys', () => {
          return request(app)
          .get('/api/articles/2')
@@ -62,7 +62,7 @@ describe('GET /api/articles/:article_id', () => {
          .then((response) => {
             expect(Array.isArray(response.body.article)).toBe(true)
             expect(typeof response.body.article[0]).toBe('object');
-            const requiredKeys = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url']
+            const requiredKeys = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count']
             expect(Object.getOwnPropertyNames(response.body.article[0])).toEqual(requiredKeys);
             expect(response.body.article[0].article_id).toBe(2)
          })
@@ -75,12 +75,30 @@ describe('GET /api/articles/:article_id', () => {
             expect(response.body.message).toBe('not found')
         })
     })
-    it ('returns 400 and error message when passed invalid article_id', () => {
+    it('returns 400 and error message when passed invalid article_id', () => {
         return request(app)
         .get('/api/articles/abcdefg')
         .expect(400)
         .then((response) => {
             expect(response.body.message).toBe('bad request')
+        })
+    })
+    it('should have correct comment_count when article exists and has comments', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then((response) => {
+            expect(response.body.article[0].hasOwnProperty('comment_count')).toBe(true);
+            expect(response.body.article[0].comment_count).toBe('11')
+        })
+    })
+    it('should have correct comment_count when article exists but has 0 comments', () => {
+        return request(app)
+        .get('/api/articles/2')
+        .expect(200)
+        .then((response) => {
+            expect(response.body.article[0].hasOwnProperty('comment_count')).toBe(true);
+            expect(response.body.article[0].comment_count).toBe('0')
         })
     })
     })
