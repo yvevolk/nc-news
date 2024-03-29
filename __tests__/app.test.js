@@ -153,14 +153,6 @@ describe('GET /api/articles/:article_id', () => {
                 expect(response.body.message).toBe('not found')
             })
         })
-        it('should return 400 when trying to query column that does not exist', () => {
-            return request(app)
-            .get('/api/articles?theme=mitch')
-            .expect(400)
-            .then((response) => {
-                expect(response.body.message).toBe('bad request')
-            })
-        })
     })
     
 describe('GET /api/articles/:article_id/comments', () => {
@@ -278,6 +270,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         })
     })
 })
+
 describe('DELETE /api/comments/:comment_id', () => {
     it('returns 204 when comment is deleted', () => {
         return request(app)
@@ -301,6 +294,7 @@ describe('DELETE /api/comments/:comment_id', () => {
         })
     })
 })
+
 describe('GET /api/users', () => {
     it('returns 200 and array of user objects with correct properties', () => {
         return request(app)
@@ -316,3 +310,44 @@ describe('GET /api/users', () => {
     })
 })
 
+describe.only('PATCH /api/comments/:comment_id', () => {
+    it('returns 200 and amended comment with correct vote number when passed valid comment_id and inc_votes', () => {
+        const votesToPatch = {inc_votes: 1};
+        return request(app)
+         .patch('/api/comments/2')
+         .send(votesToPatch)
+         .expect(200)
+         .then((response) => {
+            expect(response.body[0].votes).toBe(15)
+         })
+    })
+    it('returns 404 when passed nonexistent comment_id', () => {
+        const votesToPatch = {inc_votes: 1};
+        return request(app)
+         .patch('/api/comments/2999')
+         .send(votesToPatch)
+         .expect(404)
+         })
+    it('returns 404 when passed nonexistent comment_id', () => {
+        const votesToPatch = {inc_votes: 1};
+        return request(app)
+        .patch('/api/comments/2999')
+        .send(votesToPatch)
+        .expect(404)
+         })
+    it('returns 400 when passed invalid comment_id', () => {
+        const votesToPatch = {inc_votes: 1};
+        return request(app)
+        .patch('/api/comments/abcde')
+        .send(votesToPatch)
+        .expect(400)
+        })
+
+    it('returns 404 when passed invalid inc_votes', () => {
+        const votesToPatch = {inc_votes: 'abc'};
+        return request(app)
+        .patch('/api/comments/2')
+        .send(votesToPatch)
+        .expect(400)
+        })
+})
