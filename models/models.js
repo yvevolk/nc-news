@@ -6,8 +6,6 @@ const fetchTopics = () => {
  })
 }
 
-
-
 const fetchArticleById = (article_id) => {
    return db.query("SELECT articles.article_id, title, topic, articles.author, articles.body, articles.created_at, articles.votes, article_img_url, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id HAVING articles.article_id = $1 ORDER BY articles.created_at DESC;", [article_id])
    .then(({rows}) => {
@@ -76,12 +74,6 @@ const addComment = (comment, article_id) => {
          })
 
 }
-const updateArticle = (num, article_id) => {
-         return db.query(`UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`, [num, article_id])
-         .then(({rows}) => {
-            return rows;
-         })
-   }
 
 const fetchComment = (comment_id) => {
       return db.query(`SELECT * FROM comments WHERE comment_id = $1;`, [comment_id])
@@ -96,6 +88,22 @@ const fetchComment = (comment_id) => {
       })
    }
 
+
+const updateArticle = (num, article_id) => {
+         return db.query(`UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`, [num, article_id])
+         .then(({rows}) => {
+            return rows;
+         })
+   }
+
+const updateComment = (num, comment_id) => {
+   return db.query(`UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;`, [num, comment_id])
+   .then(({rows}) => {
+      return rows;
+   })
+}
+
+
 const removeComment = (comment_id) => {
          return db.query(`DELETE FROM comments WHERE comment_id = $1;`, [comment_id])
       }
@@ -107,4 +115,4 @@ const fetchUsers = () => {
    })
 }
 
-module.exports = {fetchTopics, fetchArticleById, checkTopicExists, fetchArticles, fetchComments, addComment, updateArticle, fetchComment, removeComment, fetchUsers}
+module.exports = {fetchTopics, fetchArticleById, checkTopicExists, fetchArticles, fetchComments, addComment, updateArticle, updateComment, fetchComment, removeComment, fetchUsers}

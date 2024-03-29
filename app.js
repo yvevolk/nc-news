@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const {getTopics, getEndpointsInfo, getArticleById, getArticles, getComments, postComment, patchArticle, deleteComment, getUsers} = require('./controllers/controllers.js')
+const {getTopics, getEndpointsInfo, getArticleById, getArticles, getComments, postComment, patchArticle, patchComment, deleteComment, getUsers} = require('./controllers/controllers.js')
 const cors = require('cors');
 
 app.use(cors());
@@ -21,6 +21,8 @@ app.post('/api/articles/:article_id/comments', postComment);
 
 app.patch('/api/articles/:article_id', patchArticle);
 
+app.patch('/api/comments/:comment_id', patchComment);
+
 app.delete('/api/comments/:comment_id', deleteComment);
 
 app.get('/api/users', getUsers);
@@ -40,6 +42,5 @@ app.use((err, req, res, next) => {
     else {console.log(err)
         res.status(500).send({message: 'internal server error' })}
 });
-
 
 module.exports = app;

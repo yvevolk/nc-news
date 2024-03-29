@@ -1,4 +1,4 @@
-const {fetchTopics, fetchArticleById, fetchArticles, fetchComments, addComment, updateArticle, fetchComment, removeComment, fetchUsers, checkTopicExists} = require('../models/models.js')
+const {fetchTopics, fetchArticleById, fetchArticles, fetchComments, addComment, updateArticle, updateComment, fetchComment, removeComment, fetchUsers, checkTopicExists} = require('../models/models.js')
 const fs = require('fs/promises')
 
 exports.getTopics = (req, res, next) => {
@@ -57,6 +57,20 @@ exports.patchArticle = (req, res, next) => {
         res.status(200).send({article})
     })})
     .catch((err) => next(err))
+}
+
+exports.patchComment = (req, res, next) => {
+    const changeVotesBy = req.body.inc_votes;
+    const {comment_id} = req.params;
+    if (typeof changeVotesBy !== "number"){
+        res.status(400).send({message: 'bad request'})
+    }
+    else {
+    fetchComment(comment_id).then(() => {
+    updateComment(changeVotesBy, comment_id).then((comment) => {
+        res.status(200).send(comment)
+    })})
+    .catch((err) => next(err))}
 }
 
 exports.deleteComment = (req, res, next) => {
